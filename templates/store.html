@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ store.name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>{{ store.name }}</h1>
+    <p>{{ store.location }}</p>
+  </header>
+  <main>
+    <p>This is the detail page for <strong>{{ store.name }}</strong>. You can find more about them on their official site.</p>
+    <a href="{{ store.url }}" target="_blank">
+      <button>Visit {{ store.name }} Website</button>
+    </a>
+    <br><br>
+    <a href="/">← Back to all stores</a>
+  </main>
+</body>
+</html>
