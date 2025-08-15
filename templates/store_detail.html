@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ store.name }} – Store Finder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="header">
+    <h1>{{ store.name }}</h1>
+    <a class="btn" href="{{ url_for('home') }}">Back to Stores</a>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-list">
+          {% for category, message in messages %}
+            <li class="flash {{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <section>
+      <p><strong>Location:</strong> {{ store.location_str() }}</p>
+      {% if store.address %}
+        <p><strong>Address:</strong> {{ store.address }}</p>
+      {% endif %}
+    </section>
+
+    <div class="actions" style="display:flex; gap:.5rem; align-items:center; margin:1rem 0;">
+      <!-- Delete -->
+      <form method="post" action="{{ url_for('store_delete', store_id=store.id) }}"
+            onsubmit="return confirm('Delete this store?');" style="display:inline;">
+        <button class="btn" type="submit">Delete Store</button>
+      </form>
+    </div>
+
+    <hr>
+
+    <!-- Inline Edit Form (posts to /stores/<id>/edit) -->
+    <h2>Edit Store</h2>
+    <form method="post" action="{{ url_for('store_edit', store_id=store.id) }}">
+      <div class="field">
+        <label for="name">Store Name *</label>
+        <input id="name" name="name" type="text" required value="{{ store.name }}">
+      </div>
+
+      <div class="field">
+        <label for="city">City</label>
+        <input id="city" name="city" type="text" value="{{ store.city or '' }}">
+      </div>
+
+      <div class="field">
+        <label for="address">Address (street, unit, etc.)</label>
+        <input id="address" name="address" type="text" value="{{ store.address or '' }}">
+      </div>
+
+      <div class="field">
+        <label for="state">State (e.g., NE)</label>
+        <input id="state" name="state" type="text" value="{{ store.state or '' }}">
+      </div>
+
+      <div class="actions">
+        <button class="btn" type="submit">Save Changes</button>
+        <a class="btn-link" href="{{ url_for('store_detail', store_id=store.id) }}">Reset</a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

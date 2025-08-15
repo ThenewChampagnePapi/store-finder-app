@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Add Store – Store Finder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="header">
+    <h1>Add a Store</h1>
+    <a class="btn" href="{{ url_for('home') }}">Back to Stores</a>
+  </header>
+
+  <main>
+    <form method="post">
+      <div class="field">
+        <label for="name">Store Name</label>
+        <input id="name" name="name" type="text" value="{{ form.name or '' }}" required>
+      </div>
+
+      <div class="field">
+        <label for="city">City</label>
+        <input id="city" name="city" type="text" value="{{ form.city or '' }}">
+      </div>
+
+      <!-- NEW address field -->
+      <div class="field">
+        <label for="address">Address (street, unit, etc.)</label>
+        <input id="address" name="address" type="text" value="{{ form.address or '' }}" placeholder="123 Main St, Suite 200">
+      </div>
+
+      <div class="field">
+        <label for="state">State (e.g., NE)</label>
+        <input id="state" name="state" type="text" value="{{ form.state or '' }}">
+      </div>
+
+      <button class="btn" type="submit">Add Store</button>
+    </form>
+  </main>
+</body>
+</html>

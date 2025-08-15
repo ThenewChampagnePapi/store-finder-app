@@ -1,24 +1,47 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Store Finder App</title>
+  <meta charset="utf-8">
+  <title>Store Finder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <header>
-    <h1>Welcome to the Store Finder App</h1>
-    <p>Find and explore stores near you!</p>
+  <header class="header">
+    <h1 style="text-align:center;">Store Finder</h1>
+    <a class="btn" href="{{ url_for('store_new') }}">Add Store</a>
   </header>
+
   <main>
-    <ul class="store-list">
-      {% for store in stores %}
-        <li>
-          <a href="{{ url_for('store_detail', store_id=store.id) }}">
-            {{ store.name }} - {{ store.location }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
+    <p>Total stores: {{ stores|length }}</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div role="status" aria-live="polite">
+          <ul class="flash-list">
+            {% for category, message in messages %}
+              <li class="flash {{ category }}">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% if stores and stores|length > 0 %}
+      <ul class="store-list">
+        {% for s in stores %}
+          <li class="store-card">
+            <h3><a href="{{ url_for('store_detail', store_id=s.id) }}">{{ s.name }}</a></h3>
+            <p>{{ s.location_str() }}</p>
+            {% if s.address %}
+              <p>{{ s.address }}</p>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No stores yet. Be the first to <a href="{{ url_for('store_new') }}">add one</a>!</p>
+    {% endif %}
   </main>
 </body>
 </html>
