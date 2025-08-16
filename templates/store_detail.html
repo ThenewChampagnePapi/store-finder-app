@@ -8,11 +8,11 @@
 </head>
 <body>
   <header class="header">
-    <h1>{{ store.name }}</h1>
-    <a class="btn" href="{{ url_for('home') }}">Back to Stores</a>
+    <h1 class="page-title">{{ store.name }}</h1>
+    <a class="btn" href="{{ url_for('home') }}">← Back to Stores</a>
   </header>
 
-  <main>
+  <main class="container">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <ul class="flash-list">
@@ -23,81 +23,101 @@
       {% endif %}
     {% endwith %}
 
-    <section>
-      <p><strong>Location:</strong> {{ store.location_str() }}</p>
-      {% if store.address %}
-        <p><strong>Address:</strong> {{ store.address }}</p>
+    <!-- Overview -->
+    <section class="card">
+      <h2 class="card-title">Store Overview</h2>
+      <div class="kv">
+        <div class="kv-row">
+          <div class="kv-key">Name</div>
+          <div class="kv-val">{{ store.name }}</div>
+        </div>
+        {% if store.address %}
+        <div class="kv-row">
+          <div class="kv-key">Address</div>
+          <div class="kv-val">{{ store.address }}</div>
+        </div>
+        {% endif %}
+        <div class="kv-row">
+          <div class="kv-key">Template</div>
+          <div class="kv-val">
+            {% if store.search_template %}
+              <code class="mono">{{ store.search_template }}</code>
+            {% else %}
+              <span class="muted">No template saved</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick search -->
+    <section class="card emphasis">
+      <h2 class="card-title">Quick Search</h2>
+      <form method="post" action="/stores/{{ store.id }}/search" class="inline-form">
+        <label class="sr-only" for="item">Item to search</label>
+        <input id="item" name="item" type="text" placeholder="Search for an item (e.g., wireless mouse)" class="input-lg">
+        <button class="btn btn-primary" type="submit" {% if not store.search_template %}disabled{% endif %}>
+          Search on {{ store.name }}
+        </button>
+      </form>
+      {% if not store.search_template %}
+        <p class="muted" style="margin-top:.5rem;">Save a search template below to enable the quick search.</p>
       {% endif %}
     </section>
 
-    <!-- Search directly from this page -->
-    <section style="margin-top:1rem;">
-      <h2>Search Items at {{ store.name }}</h2>
-
-      {% if store.search_template %}
-        <p><strong>Current template:</strong> {{ store.search_template }}</p>
-      {% else %}
-        <p class="muted"><em>No search template saved yet for this store.</em></p>
-      {% endif %}
-
-      <!-- Direct path to avoid BuildError -->
-      <form method="post" action="/stores/{{ store.id }}/search" style="display:flex; gap:.5rem; align-items:flex-end; flex-wrap:wrap;">
-        <div class="field" style="min-width:260px;">
-          <label for="item">Item to search for</label>
-          <input id="item" name="item" type="text" placeholder="wireless mouse">
-        </div>
-        <button class="btn" type="submit" {% if not store.search_template %}disabled{% endif %}>Search</button>
-      </form>
+    <!-- Advanced: set/update template -->
+    <section class="card">
+      <details>
+        <summary class="summary">Set / Update Search Template</summary>
+        <p class="muted">Paste a store search URL that <strong>already contains a sample item</strong>, then enter that exact item text. We’ll replace it with <code>{query}</code>.</p>
+        <form method="post" action="/stores/{{ store.id }}/template" class="stack-form">
+          <div class="field">
+            <label for="example_url">Example Search URL</label>
+            <input id="example_url" name="example_url" type="text" placeholder="https://www.bestbuy.com/site/searchpage.jsp?st=pen">
+          </div>
+          <div class="field">
+            <label for="sample_item">Sample item in that URL</label>
+            <input id="sample_item" name="sample_item" type="text" placeholder="pen">
+          </div>
+          <div class="actions">
+            <button class="btn" type="submit">Save Template</button>
+          </div>
+        </form>
+      </details>
     </section>
 
-    <!-- Save/update the search template on this page -->
-    <section style="margin-top:1rem;">
-      <h3>Set / Update Search Template</h3>
-      <p>Paste a store search URL that already contains a sample item, then enter that exact sample text. We’ll replace it with <code>{query}</code>.</p>
-
-      <!-- Direct path to avoid BuildError -->
-      <form method="post" action="/stores/{{ store.id }}/template">
-        <div class="field">
-          <label for="example_url">Example Search URL</label>
-          <input id="example_url" name="example_url" type="text" placeholder="https://www.bestbuy.com/site/searchpage.jsp?st=pen">
-        </div>
-        <div class="field">
-          <label for="sample_item">Sample item in that URL</label>
-          <input id="sample_item" name="sample_item" type="text" placeholder="pen">
-        </div>
-        <button class="btn" type="submit">Save Template</button>
-      </form>
+    <!-- Edit store -->
+    <section class="card">
+      <details>
+        <summary class="summary">Edit Store Details</summary>
+        <form method="post" action="/stores/{{ store.id }}/edit" class="stack-form">
+          <div class="field">
+            <label for="name">Store Name *</label>
+            <input id="name" name="name" type="text" required value="{{ store.name }}">
+          </div>
+          <div class="field">
+            <label for="address">Address</label>
+            <input id="address" name="address" type="text" value="{{ store.address or '' }}">
+          </div>
+          <div class="actions">
+            <button class="btn" type="submit">Save Changes</button>
+          </div>
+        </form>
+      </details>
     </section>
 
-    <hr>
+    <!-- Danger zone -->
+    <section class="card danger">
+      <details>
+        <summary class="summary">Danger Zone</summary>
+        <p class="muted">Delete this store and all of its settings. This cannot be undone.</p>
+        <form method="post" action="/stores/{{ store.id }}/delete"
+              onsubmit="return confirm('Delete this store?');">
+          <button class="btn btn-danger" type="submit">Delete Store</button>
+        </form>
+      </details>
+    </section>
 
-    <!-- Standalone Delete form (NOT nested) -->
-    <form method="post" action="/stores/{{ store.id }}/delete"
-          onsubmit="return confirm('Delete this store?');" style="margin:1rem 0;">
-      <button class="btn" type="submit">Delete Store</button>
-    </form>
-
-    <!-- Inline Edit form (separate from Delete) -->
-    <h2>Edit Store</h2>
-    <form method="post" action="/stores/{{ store.id }}/edit">
-      <div class="field">
-        <label for="name">Store Name *</label>
-        <input id="name" name="name" type="text" required value="{{ store.name }}">
-      </div>
-      <div class="field">
-        <label for="city">City</label>
-        <input id="city" name="city" type="text" value="{{ store.city or '' }}">
-      </div>
-      <div class="field">
-        <label for="address">Address</label>
-        <input id="address" name="address" type="text" value="{{ store.address or '' }}">
-      </div>
-      <div class="field">
-        <label for="state">State</label>
-        <input id="state" name="state" type="text" value="{{ store.state or '' }}">
-      </div>
-      <button class="btn" type="submit">Save Changes</button>
-    </form>
   </main>
 </body>
 </html>

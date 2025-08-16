@@ -13,6 +13,16 @@
   </header>
 
   <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-list">
+          {% for category, message in messages %}
+            <li class="flash {{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
     <form method="post">
       <div class="field">
         <label for="name">Store Name *</label>
@@ -20,29 +30,21 @@
       </div>
 
       <div class="field">
-        <label for="city">City</label>
-        <input id="city" name="city" type="text" value="{{ form.city or '' }}">
+        <label for="address">Address</label>
+        <input id="address" name="address" type="text" value="{{ form.address or '' }}" placeholder="123 Main St, City, ST 12345">
       </div>
 
-      <div class="field">
-        <label for="address">Address (street, unit, etc.)</label>
-        <input id="address" name="address" type="text" value="{{ form.address or '' }}">
-      </div>
-
-      <div class="field">
-        <label for="state">State (e.g., NE)</label>
-        <input id="state" name="state" type="text" value="{{ form.state or '' }}">
-      </div>
-
-      <!-- NEW (optional at creation time) -->
       <hr>
-      <h3>Optional: Store Search Parameter</h3>
+      <h3>Optional: Store Search Template</h3>
+      <p class="muted">Paste an example search URL from this store that already contains a sample item, plus the exact sample item text.</p>
+
       <div class="field">
-        <label for="example_url">Example search URL (must include a sample item)</label>
+        <label for="example_url">Example search URL</label>
         <input id="example_url" name="example_url" type="text" value="{{ form.example_url or '' }}" placeholder="https://www.bestbuy.com/site/searchpage.jsp?st=pen">
       </div>
+
       <div class="field">
-        <label for="sample_item">That sample item text</label>
+        <label for="sample_item">Sample item in that URL</label>
         <input id="sample_item" name="sample_item" type="text" value="{{ form.sample_item or '' }}" placeholder="pen">
       </div>
 

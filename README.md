@@ -1,13 +1,10 @@
-# Store Finder App
+# Store Finder
 
-A simple Flask app to list stores and show their details.
+A Flask app to add stores and search store sites for items via a per-store URL template.
 
 ## How to Run
+1) (Optional) Create/activate venv
 
-1. Clone the repo
-2. Run `pip install flask`
-3. Run the app with `python app.py`
-4. Go to `http://127.0.0.1:5000`
 
 ## Features
 

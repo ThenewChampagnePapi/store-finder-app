@@ -1,47 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Store Finder</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Finder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <header class="header">
-    <h1 style="text-align:center;">Store Finder</h1>
-    <a class="btn" href="{{ url_for('store_new') }}">Add Store</a>
-  </header>
+    <div class="container">
+        <header>
+            <h1>Store Finder</h1>
+            <!-- FIX: use 'store_new' (matches your /stores/new route) -->
+            <a class="btn" href="{{ url_for('store_new') }}">+ Add Store</a>
+        </header>
 
-  <main>
-    <p>Total stores: {{ stores|length }}</p>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div role="status" aria-live="polite">
-          <ul class="flash-list">
-            {% for category, message in messages %}
-              <li class="flash {{ category }}">{{ message }}</li>
+        <div class="grid">
+            {% for s in stores %}
+            <div class="card">
+                <h2>{{ s.name }}</h2>
+                <p>{{ s.address }}</p>
+                <div class="card-actions">
+                    <a href="{{ url_for('store_detail', store_id=s.id) }}" class="btn">View</a>
+                </div>
+            </div>
             {% endfor %}
-          </ul>
         </div>
-      {% endif %}
-    {% endwith %}
-
-    {% if stores and stores|length > 0 %}
-      <ul class="store-list">
-        {% for s in stores %}
-          <li class="store-card">
-            <h3><a href="{{ url_for('store_detail', store_id=s.id) }}">{{ s.name }}</a></h3>
-            <p>{{ s.location_str() }}</p>
-            {% if s.address %}
-              <p>{{ s.address }}</p>
-            {% endif %}
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>No stores yet. Be the first to <a href="{{ url_for('store_new') }}">add one</a>!</p>
-    {% endif %}
-  </main>
+    </div>
 </body>
 </html>

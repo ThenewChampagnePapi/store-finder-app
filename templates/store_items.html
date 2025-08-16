@@ -23,10 +23,10 @@
       {% endif %}
     {% endwith %}
 
-    <!-- Save / update template -->
+    <!-- Step 1: Save/update the store's search template -->
     <section>
       <h2>Step 1: Save the Search Template</h2>
-      <p>Paste a store search URL that already contains a sample item, then tell us the exact sample item string. We’ll replace it with <code>{query}</code>.</p>
+      <p>Paste a store search URL that already contains a sample item. Then tell us the exact sample item text. We’ll replace it with <code>{query}</code>.</p>
       <form method="post">
         <div class="field">
           <label for="example_url">Example Search URL (includes a sample item)</label>
@@ -43,6 +43,7 @@
 
       {% if store.search_template %}
         <p><strong>Current template:</strong> {{ store.search_template }}</p>
+        <p>We’ll replace <code>{query}</code> with your item (properly URL-encoded).</p>
       {% else %}
         <p><em>No template saved yet for this store.</em></p>
       {% endif %}
@@ -50,7 +51,7 @@
 
     <hr>
 
-    <!-- Search items -->
+    <!-- Step 2: Search with that template -->
     <section>
       <h2>Step 2: Search for an Item</h2>
       <form method="post">
