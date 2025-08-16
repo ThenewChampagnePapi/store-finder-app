@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Find Items – {{ store.name }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="header">
+    <h1>Find Items – {{ store.name }}</h1>
+    <a class="btn" href="{{ url_for('store_detail', store_id=store.id) }}">Back to Store</a>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-list">
+          {% for category, message in messages %}
+            <li class="flash {{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Save / update template -->
+    <section>
+      <h2>Step 1: Save the Search Template</h2>
+      <p>Paste a store search URL that already contains a sample item, then tell us the exact sample item string. We’ll replace it with <code>{query}</code>.</p>
+      <form method="post">
+        <div class="field">
+          <label for="example_url">Example Search URL (includes a sample item)</label>
+          <input id="example_url" name="example_url" type="text" placeholder="https://www.bestbuy.com/site/searchpage.jsp?st=pen">
+        </div>
+        <div class="field">
+          <label for="sample_item">Sample item used in that URL</label>
+          <input id="sample_item" name="sample_item" type="text" placeholder="pen">
+        </div>
+        <div class="actions">
+          <button class="btn" type="submit" name="set_template" value="1">Save Template</button>
+        </div>
+      </form>
+
+      {% if store.search_template %}
+        <p><strong>Current template:</strong> {{ store.search_template }}</p>
+      {% else %}
+        <p><em>No template saved yet for this store.</em></p>
+      {% endif %}
+    </section>
+
+    <hr>
+
+    <!-- Search items -->
+    <section>
+      <h2>Step 2: Search for an Item</h2>
+      <form method="post">
+        <div class="field">
+          <label for="item">Item to search for</label>
+          <input id="item" name="item" type="text" placeholder="wireless mouse">
+        </div>
+        <div class="actions">
+          <button class="btn" type="submit" name="do_search" value="1"
+                  {% if not store.search_template %}disabled{% endif %}>
+            Search on {{ store.name }}
+          </button>
+        </div>
+      </form>
+      {% if not store.search_template %}
+        <p class="muted">Save a template above first.</p>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

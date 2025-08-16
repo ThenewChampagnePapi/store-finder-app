@@ -30,43 +30,73 @@
       {% endif %}
     </section>
 
-    <div class="actions" style="display:flex; gap:.5rem; align-items:center; margin:1rem 0;">
-      <!-- Delete -->
-      <form method="post" action="{{ url_for('store_delete', store_id=store.id) }}"
-            onsubmit="return confirm('Delete this store?');" style="display:inline;">
-        <button class="btn" type="submit">Delete Store</button>
+    <!-- Search directly from this page -->
+    <section style="margin-top:1rem;">
+      <h2>Search Items at {{ store.name }}</h2>
+
+      {% if store.search_template %}
+        <p><strong>Current template:</strong> {{ store.search_template }}</p>
+      {% else %}
+        <p class="muted"><em>No search template saved yet for this store.</em></p>
+      {% endif %}
+
+      <!-- Direct path to avoid BuildError -->
+      <form method="post" action="/stores/{{ store.id }}/search" style="display:flex; gap:.5rem; align-items:flex-end; flex-wrap:wrap;">
+        <div class="field" style="min-width:260px;">
+          <label for="item">Item to search for</label>
+          <input id="item" name="item" type="text" placeholder="wireless mouse">
+        </div>
+        <button class="btn" type="submit" {% if not store.search_template %}disabled{% endif %}>Search</button>
       </form>
-    </div>
+    </section>
+
+    <!-- Save/update the search template on this page -->
+    <section style="margin-top:1rem;">
+      <h3>Set / Update Search Template</h3>
+      <p>Paste a store search URL that already contains a sample item, then enter that exact sample text. We’ll replace it with <code>{query}</code>.</p>
+
+      <!-- Direct path to avoid BuildError -->
+      <form method="post" action="/stores/{{ store.id }}/template">
+        <div class="field">
+          <label for="example_url">Example Search URL</label>
+          <input id="example_url" name="example_url" type="text" placeholder="https://www.bestbuy.com/site/searchpage.jsp?st=pen">
+        </div>
+        <div class="field">
+          <label for="sample_item">Sample item in that URL</label>
+          <input id="sample_item" name="sample_item" type="text" placeholder="pen">
+        </div>
+        <button class="btn" type="submit">Save Template</button>
+      </form>
+    </section>
 
     <hr>
 
-    <!-- Inline Edit Form (posts to /stores/<id>/edit) -->
+    <!-- Standalone Delete form (NOT nested) -->
+    <form method="post" action="/stores/{{ store.id }}/delete"
+          onsubmit="return confirm('Delete this store?');" style="margin:1rem 0;">
+      <button class="btn" type="submit">Delete Store</button>
+    </form>
+
+    <!-- Inline Edit form (separate from Delete) -->
     <h2>Edit Store</h2>
-    <form method="post" action="{{ url_for('store_edit', store_id=store.id) }}">
+    <form method="post" action="/stores/{{ store.id }}/edit">
       <div class="field">
         <label for="name">Store Name *</label>
         <input id="name" name="name" type="text" required value="{{ store.name }}">
       </div>
-
       <div class="field">
         <label for="city">City</label>
         <input id="city" name="city" type="text" value="{{ store.city or '' }}">
       </div>
-
       <div class="field">
-        <label for="address">Address (street, unit, etc.)</label>
+        <label for="address">Address</label>
         <input id="address" name="address" type="text" value="{{ store.address or '' }}">
       </div>
-
       <div class="field">
-        <label for="state">State (e.g., NE)</label>
+        <label for="state">State</label>
         <input id="state" name="state" type="text" value="{{ store.state or '' }}">
       </div>
-
-      <div class="actions">
-        <button class="btn" type="submit">Save Changes</button>
-        <a class="btn-link" href="{{ url_for('store_detail', store_id=store.id) }}">Reset</a>
-      </div>
+      <button class="btn" type="submit">Save Changes</button>
     </form>
   </main>
 </body>

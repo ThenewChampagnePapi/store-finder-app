@@ -15,7 +15,7 @@
   <main>
     <form method="post">
       <div class="field">
-        <label for="name">Store Name</label>
+        <label for="name">Store Name *</label>
         <input id="name" name="name" type="text" value="{{ form.name or '' }}" required>
       </div>
 
@@ -24,10 +24,9 @@
         <input id="city" name="city" type="text" value="{{ form.city or '' }}">
       </div>
 
-      <!-- NEW address field -->
       <div class="field">
         <label for="address">Address (street, unit, etc.)</label>
-        <input id="address" name="address" type="text" value="{{ form.address or '' }}" placeholder="123 Main St, Suite 200">
+        <input id="address" name="address" type="text" value="{{ form.address or '' }}">
       </div>
 
       <div class="field">
@@ -35,7 +34,22 @@
         <input id="state" name="state" type="text" value="{{ form.state or '' }}">
       </div>
 
-      <button class="btn" type="submit">Add Store</button>
+      <!-- NEW (optional at creation time) -->
+      <hr>
+      <h3>Optional: Store Search Parameter</h3>
+      <div class="field">
+        <label for="example_url">Example search URL (must include a sample item)</label>
+        <input id="example_url" name="example_url" type="text" value="{{ form.example_url or '' }}" placeholder="https://www.bestbuy.com/site/searchpage.jsp?st=pen">
+      </div>
+      <div class="field">
+        <label for="sample_item">That sample item text</label>
+        <input id="sample_item" name="sample_item" type="text" value="{{ form.sample_item or '' }}" placeholder="pen">
+      </div>
+
+      <div class="actions">
+        <button class="btn" type="submit">Save Store</button>
+        <a class="btn-link" href="{{ url_for('home') }}">Cancel</a>
+      </div>
     </form>
   </main>
 </body>
